@@ -19,6 +19,9 @@ To both build and run use
 
 `$ mvn spring-boot:run`
 
+The Donnerwetter backend is expected to be reachable at http://localhost:8080. Reconfigure in the code is needed.
+See https://github.com/TommiA/Donnerwetter for more details.
+
 ### To use
 Provided that the web frontend starts as supposed it will be available at [http://localhost:8081] with your browser.
 To search for the temperature in a desired location set the city and country names to the appropriate boxes and click submit.
