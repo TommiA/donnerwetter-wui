@@ -3,11 +3,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html lang="en">
 <head>
+	<c:url var="home" value="http://localhost:8080" scope="request" />
 
 	<!-- Access the bootstrap Css like this,
 		Spring boot will handle the resource mapping automcatically -->
 	<link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
 
+	<script type="text/javascript" src="webjars/jquery/2.2.4/jquery.min.js"></script>
 	<!--
 	<spring:url value="/css/main.css" var="springCss" />
 	<link href="${springCss}" rel="stylesheet" />
@@ -17,51 +19,85 @@
 
 </head>
 <body>
-
-	<nav class="navbar navbar-inverse">
-		<div class="container">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="#">Spring Boot</a>
-			</div>
-			<div id="navbar" class="collapse navbar-collapse">
-				<ul class="nav navbar-nav">
-					<li class="active"><a href="#">Home</a></li>
-					<li><a href="#about">About</a></li>
-				</ul>
-			</div>
-		</div>
-	</nav>
-
+	<h3>DonnerWetter Web UI</h3>
+	<h4>Search for the temperature information</h4>
+	<h4>around the world. Set the city and country</h4>
+	<h4>and press Submit</h4>
+	<h5>For the U.S. locations use the state abbreviation</h5>
+	<h5>as the country.</h5>
 	<div class="container">
-
-		<div class="starter-template">
-			<h1>Spring Boot Web JSP Example</h1>
-			<h2>Message: ${message}</h2>
-			<a href="#" class="btn btn-info" role="button">Link Button</a>
-			<button type="button" class="btn btn-info">Button</button>
-			<input type="button" class="btn btn-info" value="Input Button">
-			<input type="submit" class="btn btn-info" value="Submit Button">
-		</div>
-		<form>
+		<form id="search-form">
 	   <div class="form-group">
-	     <label for="email">Email address:</label>
-	     <input type="email" class="form-control" id="email">
+	     <label for="City">City:</label>
+	     <input type="City" class="form-control" id="City">
 	   </div>
 	   <div class="form-group">
-	     <label for="pwd">Password:</label>
-	     <input type="password" class="form-control" id="pwd">
+	     <label for="Country">Country:</label>
+	     <input type="Country" class="form-control" id="Country">
 	   </div>
-	   <div class="checkbox">
-	     <label><input type="checkbox"> Remember me</label>
-	   </div>
-	   <button type="submit" class="btn btn-default">Submit</button>
-	 </form> 
+	   <button type="submit" class="btn btn-default" id="btn-search">Submit</button>
+		 <div id="feedback"></div>
+	 </form>
 
 
 	</div>
+	<script type="text/javascript">
 
+	jQuery(document).ready(function($) {
+		$("#search-form").submit(function(event) {
+			// Disble the search button
+			enableSearchButton(false);
+			// Prevent the form from submitting via the browser.
+			event.preventDefault();
+			searchViaAjax();
+		});
+
+	});
+
+		function searchViaAjax() {
+			var city = $("#City").val();
+			var country = $("#Country").val();
+
+			$.ajax({
+				type : "GET",
+				//crossDomain: true,
+				url : "${home}",
+				data : {"city" : city, "country" : country},
+				async: true,
+				timeout : 100000,
+				success : function(data) {
+					console.log("SUCCESS: ", data);
+					display(data);
+				},
+				error : function(e) {
+					console.log("ERROR: ", e);
+					display(e);
+				},
+				done : function(e) {
+					console.log("DONE");
+					enableSearchButton(true);
+				}
+			});
+
+		}
+
+		function enableSearchButton(flag) {
+			$("#btn-search").prop("disabled", flag);
+		}
+
+		function display(data) {
+			var json = "<h4>Temperature in "+ data.city+", "+data.country +" is "
+					+ data.value + " degrees in Centigrade</h4>";
+			$('#feedback').html(json);
+		}
+
+		function displayJSON(data) {
+			var json = "<h4>Ajax Response</h4><pre>"
+					+ JSON.stringify(data, null, 4) + "</pre>";
+			$('#feedback').html(json);
+		}
+	</script>
 	<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
 </body>
 
 </html>
