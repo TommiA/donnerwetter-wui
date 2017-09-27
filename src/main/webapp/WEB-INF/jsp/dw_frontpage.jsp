@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html lang="en">
 <head>
-	<c:url var="home" value="http://localhost:8080" scope="request" />
+	<c:url var="home" value="${backendurl}" scope="request" />
 
 	<!-- Access the bootstrap Css like this,
 		Spring boot will handle the resource mapping automcatically -->
@@ -19,13 +19,13 @@
 
 </head>
 <body>
-	<h3>DonnerWetter Web UI</h3>
-	<h4>Search for the temperature information</h4>
-	<h4>around the world. Set the city and country</h4>
-	<h4>and press Submit</h4>
-	<h5>For the U.S. locations use the state abbreviation</h5>
-	<h5>as the country.</h5>
 	<div class="container">
+		<h3>DonnerWetter Web UI</h3>
+		<h4>Search for the temperature information</h4>
+		<h4>around the world. Set the city and country</h4>
+		<h4>and press Submit</h4>
+		<h5>For the U.S. locations use the state abbreviation</h5>
+		<h5>as the country.</h5>
 		<form id="search-form">
 	   <div class="form-group">
 	     <label for="City">City:</label>
@@ -86,9 +86,12 @@
 		}
 
 		function display(data) {
-			var json = "<h4>Temperature in "+ data.city+", "+data.country +" is "
-					+ data.value + " degrees in Centigrade</h4>";
-			$('#feedback').html(json);
+			var results = "<h4>No information available for that location</h4>";
+			if( typeof data.city !== "undefined" ) {
+				results = "<h4>Temperature in "+ data.city+", "+data.country +" is "
+						+ data.value + " degrees in Centigrade as measured on "+data.dateTimeUpdated+" London, UK time</h4>";
+			}
+			$('#feedback').html(results);
 		}
 
 		function displayJSON(data) {
